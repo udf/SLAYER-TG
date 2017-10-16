@@ -1,6 +1,3 @@
-import os
-import sys
-import re
 import xml.etree.ElementTree as ET
 from common import *
 
@@ -44,7 +41,7 @@ for string in tree.getroot():
 if chat_admin_string is not None:
     # \m/ emoji
     chat_admin_string.text = '🤘'
-    tree.write('SLAYER-🤘.xml')
+    tree.write('SLAYER-EMOJI.xml')
 
     # invisible separator
     chat_admin_string.text = '⁣'
