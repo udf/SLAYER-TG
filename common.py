@@ -16,28 +16,28 @@ class Inhibitor():
             return 1 if self.is_on else -1
         return 0
 
-class Inhibitor_HTML(Inhibitor):
+class InhibitorHTML(Inhibitor):
     def test_on(self, s):
         return s[0] == '<'
 
     def test_off(self, s):
         return s[0] == '>'
 
-class Inhibitor_percent_formatter(Inhibitor):
+class InhibitorPercentFormatter(Inhibitor):
     def test_on(self, s):
         return s[0] == '%'
 
     def test_off(self, s):
         return re.match('[^\w\$%]', s[0])
 
-class Inhibitor_url(Inhibitor):
+class InhibitorUrl(Inhibitor):
     def test_on(self, s):
         return s.startswith('http')
 
     def test_off(self, s):
         return re.match(r'[^\w\-_~:/\?#\[\]@!\$&\'\(\)\*\+,;=`\.]', s[0])
 
-class Inhibitor_username_placeholder(Inhibitor):
+class InhibitorUsernamePlaceholder(Inhibitor):
     def test_on(self, s):
         return re.match('^un\d', s)
 
@@ -52,14 +52,14 @@ def multi_sub(subject, subs):
     return subject
 
 def THRASH_SHIT_UP(s):
-    return multi_sub(s.upper() + ' ', # add a space to the end so we can match things like the "c" in "music"
+    return multi_sub(s.upper(),
                 [
-                    ('U', 'V'),
-                    ('W', 'VV'),
                     ('ENGLISH', 'SLAYER'),
                     (r'C([IEY])', r'S\1'),
-                    (r'C([^HD])', r'K\1'),
-                ])[:-1] # slice away the space that we added
+                    (r'C([^HV]|\b)', r'K\1'),
+                    ('U', 'V'),
+                    ('W', 'VV'),
+                ])
 
 
 def FVCK_SHIT_UP(inhibitors, s):
@@ -76,12 +76,11 @@ def FVCK_SHIT_UP(inhibitors, s):
         # iterate through the remaining string
         for i in range(len(s)):
             # slice from the i-th character to the end
-            current_s = s[i:]
             # test each inhibitor
             for inhibitor in inhibitors:
-                inhibitor_count += inhibitor.test(current_s)
+                inhibitor_count += inhibitor.test(s[i:])
 
-            # if something changed then we didn't reach the end of the string
+            # if something changed then we haven't reached the end of the string
             if inhibitor_count != last_inhibitor_count:
                 # set a flag and break
                 reached_end = False
@@ -96,7 +95,7 @@ def FVCK_SHIT_UP(inhibitors, s):
         new_output = s[:i]
         if last_inhibitor_count == 0:
             # if all the inhibitors WERE (ie from the time we started matching) off,
-            # then we can THRASH SHIP UP \m/
+            # then we can THRASH SHIT UP \m/
             new_output = THRASH_SHIT_UP(new_output)
         output += new_output
         # remember the current inhibitor count so we know what to do with the next match
