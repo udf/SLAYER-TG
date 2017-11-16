@@ -22,21 +22,32 @@ def get_new_string(name, text):
 
 
 inhibitors = [
-    Inhibitor_HTML(),
-    Inhibitor_percent_formatter(),
-    Inhibitor_url(),
-    Inhibitor_username_placeholder()
+    InhibitorHTML(),
+    InhibitorPercentFormatter(),
+    InhibitorUrl(),
+    InhibitorUsernamePlaceholder()
 ]
 
-tree = ET.parse('English.xml')
+ignored_keys = {'default_web_client_id', 'firebase_database_url', 'gcm_defaultSenderId', 'google_api_key', 'google_app_id', 'google_crash_reporting_api_key', 'google_storage_bucket', 'project_id'}
+pending_remove = []
+tree = ET.parse('English2.xml')
 
 chat_admin_string = None
-for string in tree.getroot():
-    name = string.attrib['name']
+root = tree.getroot()
+for string in root:
+    name = string.get('name')
+
+    if name in ignored_keys:
+        pending_remove.append(string)
+        continue
+
     string.text = get_new_string(name, string.text)
+
     if name == 'ChatAdmin':
         chat_admin_string = string
 
+for key in pending_remove:
+    root.remove(key)
 
 if chat_admin_string is not None:
     # \m/ emoji
