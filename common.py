@@ -44,12 +44,27 @@ class InhibitorUsernamePlaceholder(Inhibitor):
     def test_off(self, s):
         return s[0].isspace()
 
+class InhibitorDesktopFormatter(Inhibitor):
+    def test_on(self, s):
+        return s[0] == '{'
+
+    def test_off(self, s):
+        return s[0] == '}'
+
+
+class InhibitorMarkdownTag(Inhibitor):
+    def test_on(self, s):
+        return s[0] == '['
+
+    def test_off(self, s):
+        return s[0] == ']'
 
 
 def multi_sub(subject, subs):
     for pattern, repl in subs:
         subject = re.sub(pattern, repl, subject)
     return subject
+
 
 def THRASH_SHIT_UP(s):
     return multi_sub(s.upper(),
