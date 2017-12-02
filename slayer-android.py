@@ -2,15 +2,10 @@ import xml.etree.ElementTree as ET
 from common import *
 
 def unescape(string):
-    return multi_sub(string, [
-                        (r'\\n', r'\n'),
-                        (r'\\(.)', r'\1')
-                    ])
+    return re.sub(r'\\(.)', r'\1', string)
+
 def escape(string):
-    return multi_sub(string, [
-                        (r'\n', r'\\n'),
-                        (r'(["\'])', r'\\\1')
-                    ])
+    return re.sub(r'(["\'])', r'\\\1', string)
 
 def get_new_string(name, text):
     if name == 'LanguageCode':
@@ -30,19 +25,17 @@ inhibitors = [
 
 ignored_keys = {'default_web_client_id', 'firebase_database_url', 'gcm_defaultSenderId', 'google_api_key', 'google_app_id', 'google_crash_reporting_api_key', 'google_storage_bucket', 'project_id'}
 pending_remove = []
-tree = ET.parse('English2.xml')
+tree = ET.parse('English.xml')
 
 chat_admin_string = None
 root = tree.getroot()
 for string in root:
     name = string.get('name')
-
     if name in ignored_keys:
         pending_remove.append(string)
         continue
 
     string.text = get_new_string(name, string.text)
-
     if name == 'ChatAdmin':
         chat_admin_string = string
 
