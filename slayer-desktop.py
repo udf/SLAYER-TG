@@ -26,8 +26,6 @@ def parse_strings(filepath):
             line = data.count('\n', 0, line_start + 1) + 1
         return f'line {line}, col {offset - line_start}'
 
-    data = ''
-
     with open(filepath) as file:
         data = file.read()
 
@@ -63,7 +61,7 @@ def parse_strings(filepath):
 
         # if we see a quote, grab the rest of the string and throw it on the stack
         if data[offset] == '"':
-            match = re.match(r'".+?[^\\]"', data[offset:])
+            match = re.match(r'"(\\"|[^"\n])*?"', data[offset:])
             stack.append(literal_eval(match.group(0)))
             offset += match.end()
             continue
@@ -83,7 +81,11 @@ def parse_strings(filepath):
             if len(stack) > 2:
                 print(f'WARNING: Ignoring extra string(s) "{stack[:-2]}" (before {get_debug_info()})')
 
-            strings[stack[-2]] = stack[-1]
+            key, value = stack[-2], stack[-1]
+            if key in strings:
+                raise RuntimeError(f'Duplicate key "{key}" before {get_debug_info()}')
+
+            strings[key] = value
             stack.clear()
             offset += 1
             continue
@@ -115,7 +117,6 @@ try:
 except RuntimeError as e:
     print('Failed to parse .strings file:', e)
     exit(1)
-
 
 for key, string in strings.items():
     strings[key] = get_new_string(key, string)
