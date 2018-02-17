@@ -70,6 +70,8 @@ def THRASH_SHIT_UP(s):
     return multi_sub(s.upper(),
                 [
                     ('ENGLISH', 'SLAYER'),
+                    ('REMOVE\b', 'DELET'),
+                    ('DELETE\b', 'DELET'),
                     (r'C([IEY])', r'S\1'),
                     (r'C([^HV]|\b)', r'K\1'),
                     ('U', 'V'),
