@@ -1,5 +1,6 @@
 import re
 
+
 class Inhibitor():
     def __init__(self):
         self.reset()
@@ -16,6 +17,7 @@ class Inhibitor():
             return 1 if self.is_on else -1
         return 0
 
+
 class InhibitorHTML(Inhibitor):
     def test_on(self, s):
         return s[0] == '<'
@@ -23,12 +25,14 @@ class InhibitorHTML(Inhibitor):
     def test_off(self, s):
         return s[0] == '>'
 
+
 class InhibitorPercentFormatter(Inhibitor):
     def test_on(self, s):
         return s[0] == '%'
 
     def test_off(self, s):
-        return re.match('[^\w\$%]', s[0])
+        return re.match(r'[^\w\$%]', s[0])
+
 
 class InhibitorUrl(Inhibitor):
     def test_on(self, s):
@@ -37,12 +41,14 @@ class InhibitorUrl(Inhibitor):
     def test_off(self, s):
         return re.match(r'[^\w\-_~:/\?#\[\]@!\$&\'\(\)\*\+,;=`\.]', s[0])
 
+
 class InhibitorUsernamePlaceholder(Inhibitor):
     def test_on(self, s):
-        return re.match('^un\d', s)
+        return re.match(r'^un\d', s)
 
     def test_off(self, s):
         return s[0].isspace()
+
 
 class InhibitorDesktopFormatter(Inhibitor):
     def test_on(self, s):
@@ -67,16 +73,18 @@ def multi_sub(subject, subs):
 
 
 def THRASH_SHIT_UP(s):
-    return multi_sub(s.upper(),
-                [
-                    ('ENGLISH', 'SLAYER'),
-                    (r'REMOVE\b', 'DELET'),
-                    (r'DELETE\b', 'DELET'),
-                    (r'C([IEY])', r'S\1'),
-                    (r'C([^HV]|\b)', r'K\1'),
-                    ('U', 'V'),
-                    ('W', 'VV'),
-                ])
+    return multi_sub(
+        s.upper(),
+        [
+            ('ENGLISH', 'SLAYER'),
+            (r'REMOVE\b', 'DELET'),
+            (r'DELETE\b', 'DELET'),
+            (r'C([IEY])', r'S\1'),
+            (r'C([^HV]|\b)', r'K\1'),
+            ('U', 'V'),
+            ('W', 'VV'),
+        ]
+    )
 
 
 def FVCK_SHIT_UP(inhibitors, s):
@@ -122,6 +130,5 @@ def FVCK_SHIT_UP(inhibitors, s):
         # if we reached the end of the string without any matches then stop
         if reached_end:
             break
-
 
     return output
