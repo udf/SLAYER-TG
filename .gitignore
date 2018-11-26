@@ -1,0 +1,4 @@
+SLAYER-*
+build.ini
+*.session
+__pycache__
