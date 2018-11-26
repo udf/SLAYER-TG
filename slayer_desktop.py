@@ -4,6 +4,12 @@ from ast import literal_eval
 from collections import OrderedDict
 
 
+inhibitors = [
+    InhibitorDesktopFormatter(),
+    InhibitorMarkdownTag(),
+]
+
+
 def escape(string):
     return re.sub(r'(["\\])', r'\\\1', string).replace('\n', '\\n')
 
@@ -66,7 +72,7 @@ def parse_strings(filepath):
             offset += match.end()
             continue
 
-        # if we see a terminating token, then add the last two strings from the stack to 
+        # if we see a terminating token, then add the last two strings from the stack to
         # our output, usually we would want to do something with the stored operator here
         # but there is only one operator in .strings, so ¯\_(ツ)_/¯
         if data[offset] == ';':
@@ -107,28 +113,26 @@ def write_strings(strings, filename):
             )
 
 
-inhibitors = [
-    InhibitorDesktopFormatter(),
-    InhibitorMarkdownTag(),
-]
+def generate_pack(path):
+    strings = parse_strings(path)
 
-try:
-    strings = parse_strings('English.strings')
-except RuntimeError as e:
-    print('Failed to parse .strings file:', e)
-    exit(1)
+    for key, string in strings.items():
+        strings[key] = get_new_string(key, string)
 
-for key, string in strings.items():
-    strings[key] = get_new_string(key, string)
+    badges = ('🤘', '', '★')
+    badge_names = ('EMOJI', 'NO', 'STAR')
+    files = []
+    for badge, badge_name in zip(badges, badge_names):
+        strings['lng_admin_badge'] = badge
+        files.append(f'DESKTOP-{badge_name}-BADGE.strings')
+        write_strings(strings, files[-1])
 
-# \m/ emoji
-strings['lng_admin_badge'] = '🤘'
-write_strings(strings, 'SLAYER-EMOJI.strings')
+    return files
 
-# blank
-strings['lng_admin_badge'] = ''
-write_strings(strings, 'SLAYER-no.strings')
 
-# star
-strings['lng_admin_badge'] = '★'
-write_strings(strings, 'SLAYER-star.strings')
+if __name__ == '__main__':
+    try:
+        generate_pack('English.strings')
+    except RuntimeError as e:
+        print('Failed to parse .strings file:', e)
+        exit(1)
