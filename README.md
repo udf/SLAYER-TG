@@ -1,4 +1,7 @@
 # SLAYER-TG
+
+[@SLAYERPACK](https//t.me/SLAYERPACK)
+
 \M/ TELEGRAM LANGVAGE PAKK
 
 # Usage
