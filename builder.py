@@ -39,6 +39,11 @@ PACKS = (
     ),
 )
 
+HELP_MSG = '''
+For installation instructions and information, please see:
+https://github.com/udf/SLAYER-TG
+'''
+
 CHANNEL_HANDLE = '@SLAYERPACK'
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
@@ -77,6 +82,7 @@ async def upload_to_channel():
     await client.start(bot_token=os.environ['TOKEN'])
     for file in files_to_upload:
         await client.send_file(CHANNEL_HANDLE, file)
+    await client.send_message(CHANNEL_HANDLE, HELP_MSG)
 
 logger.info(f'Uploading files...')
 asyncio.get_event_loop().run_until_complete(upload_to_channel())
